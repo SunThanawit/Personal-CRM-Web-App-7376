@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useCRM } from '../context/CRMContext';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 
 const { 
-  FiUser, FiDatabase, FiDownload, FiUpload, FiTrash2, FiEye, FiEyeOff,
-  FiBell, FiMail, FiSave, FiRefreshCw, FiShield, FiSettings as FiSettingsIcon
+  FiUser, 
+  FiDatabase, 
+  FiDownload, 
+  FiUpload, 
+  FiTrash2, 
+  FiEye, 
+  FiEyeOff,
+  FiBell, 
+  FiMail, 
+  FiSave, 
+  FiRefreshCw, 
+  FiShield, 
+  FiSettings: FiSettingsIcon
 } = FiIcons;
 
 const Settings = () => {
@@ -45,6 +56,22 @@ const Settings = () => {
     confirm: ''
   });
 
+  // Load settings from localStorage on mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('crm-settings');
+    if (savedSettings) {
+      try {
+        const parsedSettings = JSON.parse(savedSettings);
+        setSettings(prevSettings => ({
+          ...prevSettings,
+          ...parsedSettings
+        }));
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    }
+  }, []);
+
   const tabs = [
     { id: 'profile', label: 'Profile', icon: FiUser },
     { id: 'notifications', label: 'Notifications', icon: FiBell },
@@ -54,18 +81,24 @@ const Settings = () => {
   ];
 
   const handleSettingChange = (section, key, value) => {
-    setSettings(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [key]: value
-      }
-    }));
+    setSettings(prev => {
+      const newSettings = {
+        ...prev,
+        [section]: {
+          ...prev[section],
+          [key]: value
+        }
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('crm-settings', JSON.stringify(newSettings));
+      return newSettings;
+    });
   };
 
   const handleProfileSave = () => {
-    // Save profile settings
     localStorage.setItem('crm-profile', JSON.stringify(settings.profile));
+    localStorage.setItem('crm-settings', JSON.stringify(settings));
     alert('Profile settings saved successfully!');
   };
 
@@ -78,7 +111,6 @@ const Settings = () => {
       alert('Password must be at least 6 characters long!');
       return;
     }
-    // Save password (in real app, this would be handled securely)
     setPasswords({ current: '', new: '', confirm: '' });
     alert('Password updated successfully!');
   };
@@ -88,6 +120,7 @@ const Settings = () => {
       contacts,
       interactions,
       tags,
+      settings,
       exportDate: new Date().toISOString(),
       version: '1.0'
     };
@@ -101,6 +134,7 @@ const Settings = () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    alert('Data exported successfully!');
   };
 
   const importData = (event) => {
@@ -112,23 +146,36 @@ const Settings = () => {
       try {
         const data = JSON.parse(e.target.result);
         if (data.contacts && Array.isArray(data.contacts)) {
-          localStorage.setItem('crm-contacts', JSON.stringify(data.contacts));
-          localStorage.setItem('crm-interactions', JSON.stringify(data.interactions || []));
+          if (data.contacts.length > 0) {
+            localStorage.setItem('crm-contacts', JSON.stringify(data.contacts));
+          }
+          if (data.interactions && data.interactions.length > 0) {
+            localStorage.setItem('crm-interactions', JSON.stringify(data.interactions));
+          }
+          if (data.settings) {
+            localStorage.setItem('crm-settings', JSON.stringify(data.settings));
+          }
           alert('Data imported successfully! Please refresh the page to see changes.');
         } else {
           alert('Invalid file format!');
         }
       } catch (error) {
         alert('Error reading file!');
+        console.error('Import error:', error);
       }
     };
     reader.readAsText(file);
+    
+    // Reset file input
+    event.target.value = '';
   };
 
   const clearAllData = () => {
     if (window.confirm('Are you sure you want to delete all data? This action cannot be undone.')) {
       localStorage.removeItem('crm-contacts');
       localStorage.removeItem('crm-interactions');
+      localStorage.removeItem('crm-settings');
+      localStorage.removeItem('crm-profile');
       alert('All data has been cleared! Please refresh the page.');
     }
   };
@@ -139,12 +186,15 @@ const Settings = () => {
         <img
           src={settings.profile.avatar}
           alt="Profile"
-          className="w-20 h-20 rounded-full object-cover"
+          className="w-20 h-20 rounded-full object-cover border-4 border-gray-200"
         />
         <div className="flex-1">
           <h3 className="text-lg font-medium text-gray-900">Profile Picture</h3>
           <p className="text-sm text-gray-600">Update your profile picture</p>
-          <button className="mt-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200">
+          <button 
+            onClick={() => alert('Profile picture upload would be implemented here')}
+            className="mt-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200"
+          >
             Change Picture
           </button>
         </div>
@@ -193,13 +243,14 @@ const Settings = () => {
                 value={passwords.current}
                 onChange={(e) => setPasswords(prev => ({ ...prev, current: e.target.value }))}
                 className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                placeholder="Enter current password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                <SafeIcon icon={showPassword ? FiEyeOff : FiEye} className="w-4 h-4 text-gray-400" />
+                <SafeIcon icon={showPassword ? FiEyeOff : FiEye} className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -211,6 +262,7 @@ const Settings = () => {
               value={passwords.new}
               onChange={(e) => setPasswords(prev => ({ ...prev, new: e.target.value }))}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              placeholder="Enter new password"
             />
           </div>
 
@@ -221,13 +273,15 @@ const Settings = () => {
               value={passwords.confirm}
               onChange={(e) => setPasswords(prev => ({ ...prev, confirm: e.target.value }))}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              placeholder="Confirm new password"
             />
           </div>
         </div>
         
         <button
           onClick={handlePasswordChange}
-          className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200"
+          disabled={!passwords.current || !passwords.new || !passwords.confirm}
+          className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Update Password
         </button>
@@ -453,12 +507,12 @@ const Settings = () => {
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
         <div className="border-b border-gray-200">
-          <nav className="flex space-x-8 px-6">
+          <nav className="flex space-x-8 px-6 overflow-x-auto">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'border-primary-500 text-primary-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
