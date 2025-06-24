@@ -17,7 +17,7 @@ function crmReducer(state, action) {
   switch (action.type) {
     case 'SET_CONTACTS':
       return { ...state, contacts: action.payload };
-    
+
     case 'ADD_CONTACT':
       const newContact = {
         ...action.payload,
@@ -27,29 +27,31 @@ function crmReducer(state, action) {
         interactionCount: 0,
       };
       return { ...state, contacts: [...state.contacts, newContact] };
-    
+
     case 'UPDATE_CONTACT':
       return {
         ...state,
         contacts: state.contacts.map(contact =>
-          contact.id === action.payload.id ? { ...contact, ...action.payload } : contact
+          contact.id === action.payload.id 
+            ? { ...contact, ...action.payload }
+            : contact
         ),
       };
-    
+
     case 'DELETE_CONTACT':
       return {
         ...state,
         contacts: state.contacts.filter(contact => contact.id !== action.payload),
         interactions: state.interactions.filter(interaction => interaction.contactId !== action.payload),
       };
-    
+
     case 'ADD_INTERACTION':
       const interaction = {
         ...action.payload,
         id: Date.now().toString(),
         createdAt: new Date().toISOString(),
       };
-      
+
       const updatedContacts = state.contacts.map(contact => {
         if (contact.id === interaction.contactId) {
           return {
@@ -60,25 +62,25 @@ function crmReducer(state, action) {
         }
         return contact;
       });
-      
+
       return {
         ...state,
         interactions: [...state.interactions, interaction],
         contacts: updatedContacts,
       };
-    
+
     case 'SET_SELECTED_CONTACT':
       return { ...state, selectedContact: action.payload };
-    
+
     case 'SET_SEARCH_QUERY':
       return { ...state, searchQuery: action.payload };
-    
+
     case 'SET_FILTER_TAG':
       return { ...state, filterTag: action.payload };
-    
+
     case 'SET_SORT_BY':
       return { ...state, sortBy: action.payload };
-    
+
     default:
       return state;
   }
@@ -91,11 +93,11 @@ export function CRMProvider({ children }) {
   useEffect(() => {
     const savedContacts = localStorage.getItem('crm-contacts');
     const savedInteractions = localStorage.getItem('crm-interactions');
-    
+
     if (savedContacts) {
       dispatch({ type: 'SET_CONTACTS', payload: JSON.parse(savedContacts) });
     }
-    
+
     if (savedInteractions) {
       dispatch({ type: 'SET_INTERACTIONS', payload: JSON.parse(savedInteractions) });
     }
