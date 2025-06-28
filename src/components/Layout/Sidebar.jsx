@@ -8,10 +8,10 @@ const { FiHome, FiUsers, FiBarChart3, FiSettings } = FiIcons;
 
 const Sidebar = () => {
   const navItems = [
-    { path: '/', icon: FiHome, label: 'Dashboard' },
-    { path: '/contacts', icon: FiUsers, label: 'Contacts' },
-    { path: '/analytics', icon: FiBarChart3, label: 'Analytics' },
-    { path: '/settings', icon: FiSettings, label: 'Settings' },
+    { path: '/', icon: FiHome, label: 'แดชบอร์ด' },
+    { path: '/contacts', icon: FiUsers, label: 'รายชื่อผู้ติดต่อ' },
+    { path: '/analytics', icon: FiBarChart3, label: 'การวิเคราะห์' },
+    { path: '/settings', icon: FiSettings, label: 'การตั้งค่า' },
   ];
 
   return (
@@ -22,8 +22,8 @@ const Sidebar = () => {
       className="w-64 bg-white shadow-lg flex flex-col"
     >
       <div className="p-6 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-gray-900">Personal CRM</h1>
-        <p className="text-sm text-gray-600 mt-1">Manage your relationships</p>
+        <h1 className="text-2xl font-bold text-gray-900">CRM ส่วนตัว</h1>
+        <p className="text-sm text-gray-600 mt-1">จัดการความสัมพันธ์ของคุณ</p>
       </div>
 
       <nav className="flex-1 p-4">

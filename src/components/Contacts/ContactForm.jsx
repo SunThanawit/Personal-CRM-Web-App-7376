@@ -56,7 +56,7 @@ const ContactForm = ({ onClose, contact = null }) => {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900">
-              {contact ? 'Edit Contact' : 'Add New Contact'}
+              {contact ? 'แก้ไขผู้ติดต่อ' : 'เพิ่มผู้ติดต่อใหม่'}
             </h2>
             <button
               onClick={onClose}
@@ -72,7 +72,7 @@ const ContactForm = ({ onClose, contact = null }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <SafeIcon icon={FiUser} className="w-4 h-4 inline mr-2" />
-                Full Name *
+                ชื่อเต็ม *
               </label>
               <input
                 type="text"
@@ -80,70 +80,67 @@ const ContactForm = ({ onClose, contact = null }) => {
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                placeholder="Enter full name"
+                placeholder="กรอกชื่อเต็ม"
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <SafeIcon icon={FiMail} className="w-4 h-4 inline mr-2" />
-                Email Address
+                อีเมล
               </label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                placeholder="Enter email address"
+                placeholder="กรอกที่อยู่อีเมล"
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <SafeIcon icon={FiPhone} className="w-4 h-4 inline mr-2" />
-                Phone Number
+                เบอร์โทรศัพท์
               </label>
               <input
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                placeholder="Enter phone number"
+                placeholder="กรอกเบอร์โทรศัพท์"
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <SafeIcon icon={FiBriefcase} className="w-4 h-4 inline mr-2" />
-                Company
+                บริษัท
               </label>
               <input
                 type="text"
                 value={formData.company}
                 onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                placeholder="Enter company name"
+                placeholder="กรอกชื่อบริษัท"
               />
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Position/Title
+              ตำแหน่ง/หน้าที่
             </label>
             <input
               type="text"
               value={formData.position}
               onChange={(e) => setFormData(prev => ({ ...prev, position: e.target.value }))}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="Enter position or job title"
+              placeholder="กรอกตำแหน่งหรือหน้าที่"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <SafeIcon icon={FiTag} className="w-4 h-4 inline mr-2" />
-              Tags
+              แท็ก
             </label>
             <div className="flex flex-wrap gap-2">
               {tags.map(tag => (
@@ -165,14 +162,14 @@ const ContactForm = ({ onClose, contact = null }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Notes
+              หมายเหตุ
             </label>
             <textarea
               value={formData.notes}
               onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
               rows={4}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="Add any additional notes about this contact..."
+              placeholder="เพิ่มหมายเหตุเกี่ยวกับผู้ติดต่อนี้..."
             />
           </div>
 
@@ -182,13 +179,13 @@ const ContactForm = ({ onClose, contact = null }) => {
               onClick={onClose}
               className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
             >
-              Cancel
+              ยกเลิก
             </button>
             <button
               type="submit"
               className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200"
             >
-              {contact ? 'Update Contact' : 'Add Contact'}
+              {contact ? 'อัปเดตผู้ติดต่อ' : 'เพิ่มผู้ติดต่อ'}
             </button>
           </div>
         </form>

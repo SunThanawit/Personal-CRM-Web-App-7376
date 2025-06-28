@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCRM } from '../context/CRMContext';
 import { format, subDays, isAfter } from 'date-fns';
+import { th } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
@@ -16,14 +17,14 @@ const Dashboard = () => {
 
   const stats = [
     {
-      title: 'Total Contacts',
+      title: 'ผู้ติดต่อทั้งหมด',
       value: contacts.length,
       icon: FiUsers,
       color: 'bg-blue-500',
       change: '+12%',
     },
     {
-      title: 'Interactions This Week',
+      title: 'ปฏิสัมพันธ์สัปดาห์นี้',
       value: interactions.filter(i => 
         isAfter(new Date(i.createdAt), subDays(new Date(), 7))
       ).length,
@@ -32,7 +33,7 @@ const Dashboard = () => {
       change: '+8%',
     },
     {
-      title: 'Active Relationships',
+      title: 'ความสัมพันธ์ที่ใช้งาน',
       value: contacts.filter(c => 
         c.lastContact && isAfter(new Date(c.lastContact), subDays(new Date(), 30))
       ).length,
@@ -41,7 +42,7 @@ const Dashboard = () => {
       change: '+5%',
     },
     {
-      title: 'Follow-ups Due',
+      title: 'รอการติดตาม',
       value: contacts.filter(c => 
         !c.lastContact || !isAfter(new Date(c.lastContact), subDays(new Date(), 14))
       ).length,
@@ -64,8 +65,8 @@ const Dashboard = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome back! Here's what's happening with your contacts.</p>
+          <h1 className="text-3xl font-bold text-gray-900">แดชบอร์ด</h1>
+          <p className="text-gray-600 mt-1">ยินดีต้อนรับ! นี่คือสถานการณ์ของผู้ติดต่อของคุณ</p>
         </div>
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -74,11 +75,11 @@ const Dashboard = () => {
           className="bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-700 transition-colors duration-200"
         >
           <SafeIcon icon={FiPlus} className="w-5 h-5" />
-          <span>Add Contact</span>
+          <span>เพิ่มผู้ติดต่อ</span>
         </motion.button>
       </div>
 
-      {/* Stats Grid */}
+      {/* กริดสถิติ */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <motion.div
@@ -92,8 +93,10 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">{stat.title}</p>
                 <p className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</p>
-                <p className={`text-sm mt-1 ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
-                  {stat.change} from last month
+                <p className={`text-sm mt-1 ${
+                  stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {stat.change} จากเดือนที่แล้ว
                 </p>
               </div>
               <div className={`${stat.color} p-3 rounded-lg`}>
@@ -105,7 +108,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Contacts */}
+        {/* ผู้ติดต่อล่าสุด */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -114,12 +117,12 @@ const Dashboard = () => {
         >
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Recent Contacts</h2>
+              <h2 className="text-xl font-semibold text-gray-900">ผู้ติดต่อล่าสุด</h2>
               <button
                 onClick={() => navigate('/contacts')}
                 className="text-sm text-primary-600 hover:text-primary-700 font-medium"
               >
-                View All
+                ดูทั้งหมด
               </button>
             </div>
           </div>
@@ -127,13 +130,13 @@ const Dashboard = () => {
             {recentContacts.length === 0 ? (
               <div className="text-center py-8">
                 <SafeIcon icon={FiUsers} className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No contacts yet</h3>
-                <p className="text-gray-600 mb-4">Start building your network by adding your first contact.</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">ยังไม่มีผู้ติดต่อ</h3>
+                <p className="text-gray-600 mb-4">เริ่มสร้างเครือข่ายของคุณด้วยการเพิ่มผู้ติดต่อคนแรก</p>
                 <button
                   onClick={() => setShowAddForm(true)}
                   className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200"
                 >
-                  Add First Contact
+                  เพิ่มผู้ติดต่อคนแรก
                 </button>
               </div>
             ) : (
@@ -151,7 +154,7 @@ const Dashboard = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-gray-500">
-                        {format(new Date(contact.createdAt), 'MMM dd')}
+                        {format(new Date(contact.createdAt), 'dd MMM', { locale: th })}
                       </p>
                     </div>
                   </div>
@@ -161,7 +164,7 @@ const Dashboard = () => {
           </div>
         </motion.div>
 
-        {/* Recent Interactions */}
+        {/* ปฏิสัมพันธ์ล่าสุด */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -170,12 +173,12 @@ const Dashboard = () => {
         >
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Recent Interactions</h2>
+              <h2 className="text-xl font-semibold text-gray-900">ปฏิสัมพันธ์ล่าสุด</h2>
               <button
                 onClick={() => navigate('/analytics')}
                 className="text-sm text-primary-600 hover:text-primary-700 font-medium"
               >
-                View Analytics
+                ดูการวิเคราะห์
               </button>
             </div>
           </div>
@@ -183,13 +186,13 @@ const Dashboard = () => {
             {recentInteractions.length === 0 ? (
               <div className="text-center py-8">
                 <SafeIcon icon={FiMessageSquare} className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No interactions yet</h3>
-                <p className="text-gray-600 mb-4">Start engaging with your contacts to see interactions here.</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">ยังไม่มีปฏิสัมพันธ์</h3>
+                <p className="text-gray-600 mb-4">เริ่มสร้างปฏิสัมพันธ์กับผู้ติดต่อของคุณ</p>
                 <button
                   onClick={() => navigate('/contacts')}
                   className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200"
                 >
-                  View Contacts
+                  ดูผู้ติดต่อ
                 </button>
               </div>
             ) : (
@@ -216,7 +219,7 @@ const Dashboard = () => {
                         <p className="font-medium text-gray-900">{interaction.subject}</p>
                         <p className="text-sm text-gray-600">{contact?.name}</p>
                         <p className="text-sm text-gray-500 mt-1">
-                          {format(new Date(interaction.createdAt), 'MMM dd, yyyy')}
+                          {format(new Date(interaction.createdAt), 'dd MMM yyyy', { locale: th })}
                         </p>
                       </div>
                     </div>
@@ -228,7 +231,7 @@ const Dashboard = () => {
         </motion.div>
       </div>
 
-      {/* Add Contact Modal */}
+      {/* เพิ่มฟอร์มผู้ติดต่อ */}
       {showAddForm && (
         <ContactForm onClose={() => setShowAddForm(false)} />
       )}

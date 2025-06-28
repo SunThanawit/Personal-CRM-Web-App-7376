@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCRM } from '../../context/CRMContext';
 import { format, subDays, isAfter } from 'date-fns';
+import { th } from 'date-fns/locale';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../../common/SafeIcon';
 
@@ -13,13 +14,13 @@ const Header = () => {
   const [notifications, setNotifications] = useState([]);
   const notificationRef = useRef(null);
 
-  // Generate notifications based on CRM data
+  // สร้างการแจ้งเตือนตามข้อมูล CRM
   useEffect(() => {
     const generateNotifications = () => {
       const newNotifications = [];
       const now = new Date();
       
-      // Follow-up reminders (contacts not contacted in 14 days)
+      // การแจ้งเตือนการติดตาม (รายชื่อที่ไม่ได้ติดต่อเป็นเวลา 14 วัน)
       const followUpContacts = contacts.filter(contact => 
         !contact.lastContact || !isAfter(new Date(contact.lastContact), subDays(now, 14))
       );
@@ -28,15 +29,15 @@ const Header = () => {
         newNotifications.push({
           id: `followup-${contact.id}`,
           type: 'followup',
-          title: 'Follow-up Reminder',
-          message: `Time to reach out to ${contact.name}`,
-          time: new Date(now - Math.random() * 3600000), // Random time within last hour
+          title: 'การแจ้งเตือนการติดตาม',
+          message: `ถึงเวลาติดต่อ ${contact.name} แล้ว`,
+          time: new Date(now - Math.random() * 3600000),
           avatar: contact.avatar,
           unread: true
         });
       });
 
-      // Recent interactions
+      // การมีปฏิสัมพันธ์ล่าสุด
       const recentInteractions = interactions
         .filter(interaction => isAfter(new Date(interaction.createdAt), subDays(now, 1)))
         .slice(0, 2);
@@ -47,8 +48,8 @@ const Header = () => {
           newNotifications.push({
             id: `interaction-${interaction.id}`,
             type: 'interaction',
-            title: 'New Interaction',
-            message: `${interaction.type} with ${contact.name}: ${interaction.subject}`,
+            title: 'การมีปฏิสัมพันธ์ใหม่',
+            message: `${getInteractionTypeInThai(interaction.type)} กับ ${contact.name}: ${interaction.subject}`,
             time: new Date(interaction.createdAt),
             avatar: contact.avatar,
             unread: true
@@ -56,28 +57,28 @@ const Header = () => {
         }
       });
 
-      // Birthday reminders (simulated)
+      // การแจ้งเตือนวันเกิด (จำลอง)
       const birthdayContacts = contacts.filter(() => Math.random() < 0.1).slice(0, 1);
       birthdayContacts.forEach(contact => {
         newNotifications.push({
           id: `birthday-${contact.id}`,
           type: 'birthday',
-          title: 'Birthday Reminder',
-          message: `${contact.name}'s birthday is coming up!`,
-          time: new Date(now - Math.random() * 86400000), // Random time within last day
+          title: 'การแจ้งเตือนวันเกิด',
+          message: `วันเกิดของ ${contact.name} จะมาถึงแล้ว!`,
+          time: new Date(now - Math.random() * 86400000),
           avatar: contact.avatar,
           unread: true
         });
       });
 
-      // Sort by time (newest first)
+      // เรียงลำดับตามเวลา (ใหม่สุดก่อน)
       return newNotifications.sort((a, b) => new Date(b.time) - new Date(a.time));
     };
 
     setNotifications(generateNotifications());
   }, [contacts, interactions]);
 
-  // Close notifications when clicking outside
+  // ปิดการแจ้งเตือนเมื่อคลิกข้างนอก
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
@@ -109,6 +110,19 @@ const Header = () => {
 
   const clearNotification = (notificationId) => {
     setNotifications(prev => prev.filter(n => n.id !== notificationId));
+  };
+
+  const getInteractionTypeInThai = (type) => {
+    switch (type) {
+      case 'email':
+        return 'อีเมล';
+      case 'call':
+        return 'โทรศัพท์';
+      case 'meeting':
+        return 'ประชุม';
+      default:
+        return 'อื่นๆ';
+    }
   };
 
   const getNotificationIcon = (type) => {
@@ -153,7 +167,7 @@ const Header = () => {
             />
             <input
               type="text"
-              placeholder="Search contacts..."
+              placeholder="ค้นหาผู้ติดต่อ..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent w-80"
@@ -162,7 +176,7 @@ const Header = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* Notification Bell */}
+          {/* กระดิ่งการแจ้งเตือน */}
           <div className="relative" ref={notificationRef}>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -182,7 +196,7 @@ const Header = () => {
               )}
             </motion.button>
 
-            {/* Notifications Dropdown */}
+            {/* เมนูแจ้งเตือน */}
             <AnimatePresence>
               {showNotifications && (
                 <motion.div
@@ -192,17 +206,17 @@ const Header = () => {
                   transition={{ duration: 0.2 }}
                   className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-lg border border-gray-200 z-50 max-h-96 overflow-hidden"
                 >
-                  {/* Header */}
+                  {/* หัวข้อ */}
                   <div className="p-4 border-b border-gray-200">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">การแจ้งเตือน</h3>
                       <div className="flex items-center space-x-2">
                         {unreadCount > 0 && (
                           <button
                             onClick={markAllAsRead}
                             className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                           >
-                            Mark all read
+                            ทำเครื่องหมายว่าอ่านแล้วทั้งหมด
                           </button>
                         )}
                         <button
@@ -215,18 +229,18 @@ const Header = () => {
                     </div>
                     {unreadCount > 0 && (
                       <p className="text-sm text-gray-600 mt-1">
-                        You have {unreadCount} unread notification{unreadCount > 1 ? 's' : ''}
+                        คุณมีการแจ้งเตือนที่ยังไม่ได้อ่าน {unreadCount} รายการ
                       </p>
                     )}
                   </div>
 
-                  {/* Notifications List */}
+                  {/* รายการแจ้งเตือน */}
                   <div className="max-h-80 overflow-y-auto">
                     {notifications.length === 0 ? (
                       <div className="p-8 text-center">
                         <SafeIcon icon={FiBell} className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                        <h4 className="text-gray-900 font-medium mb-1">No notifications</h4>
-                        <p className="text-gray-600 text-sm">You're all caught up!</p>
+                        <h4 className="text-gray-900 font-medium mb-1">ไม่มีการแจ้งเตือน</h4>
+                        <p className="text-gray-600 text-sm">คุณอ่านครบทุกรายการแล้ว!</p>
                       </div>
                     ) : (
                       <div className="divide-y divide-gray-100">
@@ -264,7 +278,7 @@ const Header = () => {
                                       {notification.message}
                                     </p>
                                     <p className="text-xs text-gray-500 mt-2">
-                                      {format(notification.time, 'MMM dd, h:mm a')}
+                                      {format(notification.time, 'dd MMM yyyy, HH:mm', { locale: th })}
                                     </p>
                                   </div>
                                   <button
@@ -288,7 +302,7 @@ const Header = () => {
                     )}
                   </div>
 
-                  {/* Footer */}
+                  {/* ท้าย */}
                   {notifications.length > 0 && (
                     <div className="p-3 border-t border-gray-200 bg-gray-50">
                       <button
@@ -298,7 +312,7 @@ const Header = () => {
                         }}
                         className="w-full text-center text-sm text-gray-600 hover:text-gray-900 font-medium"
                       >
-                        Clear all notifications
+                        ล้างการแจ้งเตือนทั้งหมด
                       </button>
                     </div>
                   )}
@@ -307,14 +321,14 @@ const Header = () => {
             </AnimatePresence>
           </div>
 
-          {/* Profile Section */}
+          {/* ส่วนโปรไฟล์ */}
           <div className="flex items-center space-x-3">
             <img
               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-              alt="Profile"
+              alt="โปรไฟล์"
               className="w-8 h-8 rounded-full object-cover"
             />
-            <span className="font-medium text-gray-900">John Doe</span>
+            <span className="font-medium text-gray-900">สมชาย ใจดี</span>
           </div>
         </div>
       </div>

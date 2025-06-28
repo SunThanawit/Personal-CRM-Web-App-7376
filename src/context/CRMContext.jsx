@@ -6,7 +6,7 @@ const CRMContext = createContext();
 const initialState = {
   contacts: [],
   interactions: [],
-  tags: ['Work', 'Personal', 'Family', 'Friend', 'Client', 'Prospect', 'Partner'],
+  tags: ['งาน', 'ส่วนตัว', 'ครอบครัว', 'เพื่อน', 'ลูกค้า', 'โอกาส', 'พันธมิตร'],
   selectedContact: null,
   searchQuery: '',
   filterTag: '',
@@ -89,7 +89,7 @@ function crmReducer(state, action) {
 export function CRMProvider({ children }) {
   const [state, dispatch] = useReducer(crmReducer, initialState);
 
-  // Load data from localStorage on mount
+  // โหลดข้อมูลจาก localStorage เมื่อเริ่มต้น
   useEffect(() => {
     const savedContacts = localStorage.getItem('crm-contacts');
     const savedInteractions = localStorage.getItem('crm-interactions');
@@ -103,7 +103,7 @@ export function CRMProvider({ children }) {
     }
   }, []);
 
-  // Save to localStorage whenever contacts or interactions change
+  // บันทึกลง localStorage เมื่อข้อมูลเปลี่ยนแปลง
   useEffect(() => {
     localStorage.setItem('crm-contacts', JSON.stringify(state.contacts));
   }, [state.contacts]);
@@ -112,19 +112,19 @@ export function CRMProvider({ children }) {
     localStorage.setItem('crm-interactions', JSON.stringify(state.interactions));
   }, [state.interactions]);
 
-  // Initialize with sample data if no data exists
+  // เริ่มต้นด้วยข้อมูลตัวอย่างถ้ายังไม่มีข้อมูล
   useEffect(() => {
     if (state.contacts.length === 0) {
       const sampleContacts = [
         {
           id: '1',
-          name: 'John Smith',
-          email: 'john.smith@example.com',
-          phone: '+1 (555) 123-4567',
-          company: 'Tech Corp',
-          position: 'Software Engineer',
-          tags: ['Work', 'Client'],
-          notes: 'Met at tech conference. Interested in our new product.',
+          name: 'สมชาย ใจดี',
+          email: 'somchai@example.com',
+          phone: '081-234-5678',
+          company: 'เทค คอร์ป',
+          position: 'วิศวกรซอฟต์แวร์',
+          tags: ['งาน', 'ลูกค้า'],
+          notes: 'พบกันที่งานประชุมเทคโนโลยี สนใจผลิตภัณฑ์ใหม่ของเรา',
           createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
           lastContact: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
           interactionCount: 3,
@@ -132,13 +132,13 @@ export function CRMProvider({ children }) {
         },
         {
           id: '2',
-          name: 'Sarah Johnson',
-          email: 'sarah.johnson@example.com',
-          phone: '+1 (555) 987-6543',
-          company: 'Design Studio',
-          position: 'Creative Director',
-          tags: ['Work', 'Partner'],
-          notes: 'Potential collaboration on upcoming project.',
+          name: 'สุดา จันทร์งาม',
+          email: 'suda@example.com',
+          phone: '082-345-6789',
+          company: 'ดีไซน์ สตูดิโอ',
+          position: 'ผู้อำนวยการฝ่ายสร้างสรรค์',
+          tags: ['งาน', 'พันธมิตร'],
+          notes: 'โอกาสความร่วมมือในโครงการที่จะมาถึง',
           createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
           lastContact: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
           interactionCount: 2,
@@ -146,13 +146,13 @@ export function CRMProvider({ children }) {
         },
         {
           id: '3',
-          name: 'Mike Chen',
-          email: 'mike.chen@example.com',
-          phone: '+1 (555) 456-7890',
-          company: 'Startup Inc',
-          position: 'Founder',
-          tags: ['Personal', 'Friend'],
-          notes: 'College friend who started his own company.',
+          name: 'มานิต วิทยา',
+          email: 'manit@example.com',
+          phone: '083-456-7890',
+          company: 'สตาร์ทอัพ อิงค์',
+          position: 'ผู้ก่อตั้ง',
+          tags: ['ส่วนตัว', 'เพื่อน'],
+          notes: 'เพื่อนมหาลัยที่เริ่มต้นบริษัทของตัวเอง',
           createdAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
           lastContact: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
           interactionCount: 1,
@@ -165,24 +165,24 @@ export function CRMProvider({ children }) {
           id: '1',
           contactId: '1',
           type: 'email',
-          subject: 'Product Demo Follow-up',
-          notes: 'Sent product demo video and pricing information.',
+          subject: 'ติดตามการสาธิตผลิตภัณฑ์',
+          notes: 'ส่งวิดีโอสาธิตผลิตภัณฑ์และข้อมูลราคา',
           createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
         },
         {
           id: '2',
           contactId: '2',
           type: 'meeting',
-          subject: 'Project Collaboration Discussion',
-          notes: 'Discussed potential collaboration on Q2 project.',
+          subject: 'หารือความร่วมมือในโครงการ',
+          notes: 'หารือโอกาสความร่วมมือในโครงการไตรมาส 2',
           createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
         },
         {
           id: '3',
           contactId: '3',
           type: 'call',
-          subject: 'Catch-up Call',
-          notes: 'Personal catch-up call about life and business.',
+          subject: 'โทรทักทาย',
+          notes: 'คุยทักทายเรื่องส่วนตัวและธุรกิจ',
           createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
         },
       ];
